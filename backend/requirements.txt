@@ -1,0 +1,17 @@
+fastapi==0.115.8
+uvicorn==0.34.0
+pydantic==2.10.6
+pydantic-settings==2.7.1
+python-multipart==0.0.20
+pillow
+langchain_openai
+langgraph
+langchain==1.2.9
+pyjwt
+passlib[bcrypt]
+bcrypt==4.0.1
+sqlalchemy
+aiosqlite
+slowapi
+google-generativeai
+requests==2.31.0

@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  genial-ai:
+    build:
+      context: ./genial-ai
+      dockerfile: Dockerfile
+    container_name: genial-ai
+    # We expose the port internally within the Docker network
+    expose:
+      - "8000"
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Tell the backend where Genial Team AI lives inside the Docker network
+      - MEDAI_URL=http://genial-ai:8000
+      # Tell the backend to store the database in our mounted volume
+      - DB_DIR=/app/data
+      # Tell the backend where to store uploaded images
+      - UPLOAD_DIR=/app/data/uploads
+      # Ensure logs are printed immediately
+      - PYTHONUNBUFFERED=1
+      # Set the build environment
+      - BUILD=production
+    env_file:
+      - .env
+    volumes:
+      # Mount the data folder to persist both the database and user uploads
+      - ./data:/app/data
+    depends_on:
+      - genial-ai
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      # Tell the Next.js relay API where the Python backend lives
+      - INTERNAL_API_URL=http://backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
