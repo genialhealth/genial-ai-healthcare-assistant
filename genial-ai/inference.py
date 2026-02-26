@@ -1,5 +1,5 @@
 """
-Inference script for the MedLIP 80-Diseases Classifier.
+Inference script for the MedSiglip 80-Diseases Classifier.
 Usage (CLI):
     python inference.py path/to/image.jpg
     python inference.py path/to/image.jpg --threshold 0.15 --top_k 10
@@ -54,7 +54,7 @@ def _prepare_input(img, model_size=448):
 # ============== Classifier ==============
 
 class DiseaseClassifier:
-    """80-classes diseases classifier powered by MedLIP.
+    """80-classes diseases classifier powered by MedSiglip.
     Args:
         model_path: Path to the TorchScript model file (model.pt).
         disease_names_path: Path to the CSV file with a 'Class' column
@@ -113,7 +113,7 @@ class DiseaseClassifier:
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="MedLIP 80-Diseases Classifier")
+    parser = argparse.ArgumentParser(description="MedSiglip 80-Diseases Classifier")
     parser.add_argument("image", help="Path to the input image")
     parser.add_argument(
         "--model", default=None,

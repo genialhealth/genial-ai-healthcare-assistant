@@ -8,9 +8,9 @@ tags:
 pipeline_tag: image-classification
 ---
 
-# MedLIP 80-Disease Classifier
+# Medsiglip 80-Disease Classifier
 
-A dermatological image classifier that recognizes **80 disease categories** using a MedLIP-based vision backbone exported as TorchScript.
+A dermatological image classifier that recognizes **80 disease categories** using a MedSiglip-based vision backbone exported as TorchScript.
 
 ## Files
 
@@ -33,8 +33,8 @@ pip install -r requirements.txt
 
 ```bash
 git lfs install
-git clone https://huggingface.co/<your-username>/medlip-80-disease-classifier
-cd medsiglip-80-disease-classifier
+git clone https://huggingface.co/genial-team/medsiglip-80-diseases-classifier
+cd medsiglip-80-diseases-classifier
 ```
 
 ### 3. Run from command line
@@ -112,7 +112,7 @@ The model outputs a probability score (sigmoid) for each of the 80 classes liste
 
 ## Citation
 
-If you use this model in your work, please cite the original MedLIP paper and this repository.
+If you use this model in your work, please cite the original Medgemma paper and this repository.
 
 ## License
 
