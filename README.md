@@ -42,7 +42,7 @@ The application is a monorepo composed of three core microservices orchestrated 
 
 1.  **Clone the Repository**:
     ```bash
-    git clone <your-repo-url>
+    git clone https://github.com/genialhealth/genial-ai-healthcare-assistant.git
     cd genial-ai-healthcare-assistant
     ```
 
