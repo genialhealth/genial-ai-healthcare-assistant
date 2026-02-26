@@ -59,7 +59,7 @@ Image  : lesion_image.jpg
 
 Top predictions (score >= 0.3):
   0.812  Melanocytic Nevus
-  0.431  Melanoma or Melanoma Mimickers
+  0.431  Melanoma
   0.378  Benign Keratinocytic Lesions and Lentigines
 ```
 

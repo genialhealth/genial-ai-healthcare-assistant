@@ -2,12 +2,12 @@
 Inference script for the MedSiglip 80-Diseases Classifier.
 Usage (CLI):
     python inference.py path/to/image.jpg
-    python inference.py path/to/image.jpg --threshold 0.15 --top_k 10
+    python inference.py path/to/image.jpg --threshold 0.3 --top_k 10
 Usage (Python API):
     from inference import DiseaseClassifier
     classifier = DiseaseClassifier("model.pt", "disease_names.csv")
     results = classifier.classify("path/to/image.jpg")
-    # [{"name": "Melanoma or Melanoma Mimickers", "score": 0.85}, ...]
+    # [{"name": "Infestation", "score": 0.85}, ...]
 """
 
 import os
