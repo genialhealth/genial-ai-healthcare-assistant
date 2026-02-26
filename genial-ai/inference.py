@@ -1,8 +1,13 @@
 """
-Inference module for the Genial Team AI MedLIP 80-Diseases Classifier.
-
-This module provides the core logic for loading a TorchScript model and performing
-multi-class classification on medical images.
+Inference script for the MedLIP 80-Diseases Classifier.
+Usage (CLI):
+    python inference.py path/to/image.jpg
+    python inference.py path/to/image.jpg --threshold 0.15 --top_k 10
+Usage (Python API):
+    from inference import DiseaseClassifier
+    classifier = DiseaseClassifier("model.pt", "disease_names.csv")
+    results = classifier.classify("path/to/image.jpg")
+    # [{"name": "Melanoma or Melanoma Mimickers", "score": 0.85}, ...]
 """
 
 import os
@@ -11,27 +16,17 @@ import numpy as np
 import pandas as pd
 import torch
 from PIL import Image
-from typing import List, Dict, Union, Any
 
-# Determine the best available device for computation
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-# ============== Image preprocessing constants ==============
+# ============== Image preprocessing ==============
 
 _IMAGENET_MEAN = np.array([0.485, 0.456, 0.406])
 _IMAGENET_STD = np.array([0.229, 0.224, 0.225])
 
 
-def _resize_and_pad(img: np.ndarray, max_size: int = 480) -> np.ndarray:
-    """Resizes an image maintaining aspect ratio and pads it to a square.
-
-    Args:
-        img: The input image as a numpy array (H, W, C).
-        max_size: The target size for the longest side of the image.
-
-    Returns:
-        A square numpy array padded with black borders.
-    """
+def _resize_and_pad(img, max_size=480):
+    """Resize image so longest side = max_size, then pad to square."""
     if img.shape[0] > max_size or img.shape[1] > max_size:
         scale = max_size / max(img.shape[0], img.shape[1])
         h = int(img.shape[0] * scale)
@@ -48,18 +43,8 @@ def _resize_and_pad(img: np.ndarray, max_size: int = 480) -> np.ndarray:
     return img
 
 
-def _prepare_input(img: np.ndarray, model_size: int = 448) -> torch.Tensor:
-    """Preprocesses a raw image for model inference.
-
-    Includes resizing, padding, normalization, and tensor conversion.
-
-    Args:
-        img: The input RGB image as a numpy array.
-        model_size: The expected input size for the model.
-
-    Returns:
-        A 4D torch tensor (1, C, H, W) ready for inference on the selected device.
-    """
+def _prepare_input(img, model_size=448):
+    """Preprocess image: resize, pad, normalize, return single-image batch tensor."""
     img = _resize_and_pad(img, model_size)
     img = img / 255.0
     img = (img - _IMAGENET_MEAN) / _IMAGENET_STD
@@ -70,22 +55,18 @@ def _prepare_input(img: np.ndarray, model_size: int = 448) -> torch.Tensor:
 
 class DiseaseClassifier:
     """80-classes diseases classifier powered by MedLIP.
-
-    This class handles the loading of the TorchScript model and provides an
-    interface for classifying images against 80 disease classes.
-
-    Attributes:
-        model: The loaded TorchScript model.
-        disease_names: A list of disease names corresponding to the model output.
+    Args:
+        model_path: Path to the TorchScript model file (model.pt).
+        disease_names_path: Path to the CSV file with a 'Class' column
+                            listing disease names (disease_names.csv).
+    Example:
+        classifier = DiseaseClassifier("model.pt", "disease_names.csv")
+        results = classifier.classify("lesion_photo.jpg")
+        for r in results:
+            print(f"{r['name']}: {r['score']:.3f}")
     """
 
     def __init__(self, model_path: str, disease_names_path: str):
-        """Initializes the classifier by loading the model and labels.
-
-        Args:
-            model_path: Path to the TorchScript model file (model.pt).
-            disease_names_path: Path to the CSV file containing labels.
-        """
         self.model = torch.jit.load(model_path, map_location=device)
         self.model.to(device)
         self.model.eval()
@@ -95,19 +76,17 @@ class DiseaseClassifier:
 
     def classify(
         self,
-        image: Union[str, Image.Image, np.ndarray],
-        score_threshold: float = 0.2,
+        image,
+        score_threshold: float = 0.3,
         top_k: int = 5,
-    ) -> List[Dict[str, Any]]:
-        """Classifies a dermatological image.
-
+    ) -> list:
+        """Classify a dermatological image.
         Args:
-            image: Can be a file path (str), a PIL Image, or a numpy array (RGB).
+            image: File path (str), PIL Image, or numpy array (H x W x 3, RGB).
             score_threshold: Minimum sigmoid score to include in results.
             top_k: Maximum number of results to return.
-
         Returns:
-            A list of dicts [{"name": str, "score": float}] sorted by score descending.
+            List of dicts [{"name": str, "score": float}] sorted by score descending.
         """
         if isinstance(image, str):
             image = np.array(Image.open(image).convert("RGB"))
@@ -118,7 +97,6 @@ class DiseaseClassifier:
 
         with torch.no_grad():
             pred = self.model(image_input)
-            # Apply sigmoid to get probabilities and handle ensemble mean if applicable
             scores = torch.sigmoid(pred).mean(dim=0).cpu().numpy()
 
         predictions = [
@@ -146,8 +124,8 @@ if __name__ == "__main__":
         help="Path to disease_names.csv (default: disease_names.csv in the same directory)",
     )
     parser.add_argument(
-        "--threshold", type=float, default=0.2,
-        help="Minimum score threshold (default: 0.2)",
+        "--threshold", type=float, default=0.3,
+        help="Minimum score threshold (default: 0.3)",
     )
     parser.add_argument(
         "--top_k", type=int, default=5,

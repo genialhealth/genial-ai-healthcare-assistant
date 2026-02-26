@@ -46,7 +46,7 @@ python inference.py path/to/lesion_image.jpg
 Optional flags:
 
 ```bash
-python inference.py path/to/lesion_image.jpg --threshold 0.15 --top_k 10
+python inference.py path/to/lesion_image.jpg --threshold 0.3 --top_k 10
 ```
 
 Example output:
@@ -57,10 +57,10 @@ Model  : model.pt
 Loading model... done.
 Image  : lesion_image.jpg
 
-Top predictions (score >= 0.2):
+Top predictions (score >= 0.3):
   0.812  Melanocytic Nevus
   0.431  Melanoma or Melanoma Mimickers
-  0.278  Benign Keratinocytic Lesions and Lentigines
+  0.378  Benign Keratinocytic Lesions and Lentigines
 ```
 
 ### 4. Python API
@@ -71,7 +71,7 @@ from inference import DiseaseClassifier
 classifier = DiseaseClassifier("model.pt", "disease_names.csv")
 
 # accepts a file path, PIL Image, or numpy RGB array
-results = classifier.classify("photo_lesion.jpg", score_threshold=0.2, top_k=5)
+results = classifier.classify("photo_lesion.jpg", score_threshold=0.3, top_k=5)
 
 for r in results:
     print(f"{r['name']}: {r['score']:.3f}")
@@ -81,21 +81,18 @@ for r in results:
 
 The model outputs a probability score (sigmoid) for each of the 80 classes listed in `disease_names.csv`. A non-exhaustive sample:
 
-- Melanoma or Melanoma Mimickers
-- Basal Cell Carcinoma
-- Squamous Cell Carcinoma or Keratoacanthoma
+- Infestation
+- Diabetes
+- Bowen Disease - Squamous Cell Carcinoma in Situ 
+- Hyperpigmentation 
+- Lichen Planus
+- Hypopigmentation
+- Melanoma
 - Actinic Keratosis
-- Melanocytic Nevus
-- Psoriasis
-- Eczema - Atopic Dermatitis
-- Vitiligo
-- Rosacea
-- Alopecia Areata
-- Onychomycosis
-- Tinea / Tinea Versicolor
-- Scabies / Leishmaniasis
-- Lupus Erythematosus
-- … and 66 more (see `disease_names.csv`)
+- Dermatomyositis
+- Hair Diseases
+- Leprosy
+- … and 69 more (see `disease_names.csv`)
 
 ## Input Requirements
 
@@ -110,7 +107,7 @@ The model outputs a probability score (sigmoid) for each of the 80 classes liste
 
 - The model is exported with **TorchScript** (`torch.jit.load`) — no model source code required.
 - Runs on **CPU or GPU** automatically.
-- `score_threshold=0.2` is a reasonable default; lower it to see more candidates.
+- `score_threshold=0.3` is a reasonable default; lower it to see more candidates.
 - Scores are **independent sigmoid probabilities**, not a softmax — multiple classes can score high simultaneously (multi-label setting).
 
 ## Citation
