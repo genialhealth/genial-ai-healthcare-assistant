@@ -1,7 +1,7 @@
 """
 Genial Team AI - FastAPI Microservice.
 
-This service provides a RESTful API for the MedLIP 80-Diseases Classifier.
+This service provides a RESTful API for the MedSigLIP 80-Diseases Classifier.
 It exposes a classification endpoint that accepts image files and returns
 predicted disease classes with confidence scores.
 """
@@ -30,7 +30,7 @@ class HealthResponse(BaseModel):
 
 app = FastAPI(
     title="Genial Team AI - Medical Image Classifier",
-    description="Microservice for medical disease classification using MedLIP.",
+    description="Microservice for medical disease classification using MedSigLIP.",
     version="1.0.0"
 )
 
@@ -72,7 +72,7 @@ async def classify_image(file: UploadFile = File(...)):
         image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         
         # Run inference
-        results = classifier.classify(image, score_threshold=0.2, top_k=5)
+        results = classifier.classify(image, score_threshold=0.3, top_k=5)
         
         return results
     except Exception as e:

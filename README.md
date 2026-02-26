@@ -23,7 +23,7 @@ The application is a monorepo composed of three core microservices orchestrated 
 
 1.  **Frontend (Next.js)**: A responsive React interface for real-time interaction and secure image handling.
 2.  **Backend (FastAPI & LangGraph)**: The orchestration layer. It manages the search logic using a state-graph and integrates multiple LLMs (Gemini, MedGemma) to process conditions.
-3.  **Genial Team AI (PyTorch)**: A dedicated microservice running a custom vision model (MedLIP 80-Diseases Classifier based on MedSigLip) for specialized disease classification with visual signs on the skin. Please note that the model weights provided in this repository are a simpler version (available on [HuggingFace](https://huggingface.co/genial-team/medsiglip-80-diseases-classifier)), trained on a reduced dataset and supporting a lower number of diseases. The final, optimized weights will be utilized in the live demonstration of the application.
+3.  **Genial Team AI (PyTorch)**: A dedicated microservice running a custom vision model (MedSigLIP 80-Diseases Classifier based on MedSigLip) for specialized disease classification with visual signs on the skin. Please note that the model weights provided in this repository are a simpler version (available on [HuggingFace](https://huggingface.co/genial-team/medsiglip-80-diseases-classifier)), trained on a reduced dataset and supporting a lower number of diseases. The final, optimized weights will be utilized in the live demonstration of the application.
 
 ---
 
